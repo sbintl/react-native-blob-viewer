@@ -1,0 +1,28 @@
+{
+  "name": "react-native-blob-viewer",
+  "version": "1.0.0",
+  "description": "Pre attachment blob viewer for multiple file types in a gallery view",
+  "main": "BlobViewer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sbintl/react-native-blob-viewer.git"
+  },
+  "keywords": [
+    "blob",
+    "fileviewer",
+    "multiple",
+    "react-native"
+  ],
+  "author": "Amin Hussaini",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sbintl/react-native-blob-viewer/issues"
+  },
+  "homepage": "https://github.com/sbintl/react-native-blob-viewer#readme",
+  "devDependencies": {
+    "metro-react-native-babel-preset": "^0.58.0"
+  }
+}
