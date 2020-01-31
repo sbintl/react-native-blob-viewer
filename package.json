@@ -17,7 +17,7 @@
     "react-native"
   ],
   "author": "Amin Hussaini",
-  "license": "ISC",
+  "license": "MIT License",
   "bugs": {
     "url": "https://github.com/sbintl/react-native-blob-viewer/issues"
   },
