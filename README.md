@@ -155,6 +155,8 @@ render(){
 | onSend  | func  | -       | retrun final selected array                       |
 | onBack  | func  | -       | when click on back do something                   |
 
+---
+
 ###### Pull requests, feedbacks and suggestions are welcome!
 
 Author: Amin Hussaini
