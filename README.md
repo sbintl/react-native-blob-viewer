@@ -10,7 +10,7 @@ This library is available on npm, install it with:
 
 or using yarn
 
-> yarn add react-native-blob-viewer.
+> yarn add react-native-blob-viewer
 
 # Usage
 
