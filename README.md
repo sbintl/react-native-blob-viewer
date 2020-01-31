@@ -158,6 +158,3 @@ render(){
 ---
 
 ###### Pull requests, feedbacks and suggestions are welcome!
-
-Author: Amin Hussaini
-Contributor: Syed Muhammad Murtaza
