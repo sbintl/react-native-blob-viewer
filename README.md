@@ -7,7 +7,7 @@ React Native Pre-attachment blob viewer for multiple file types in a gallery vie
 This library is available on npm, install it with:
 
 > npm i react-native-blob-viewer
-> or
+> ####or
 > yarn add react-native-blob-viewer.
 
 # Usage
@@ -129,7 +129,7 @@ openUploadImage = () => {
   };
 
  selectedImages = selectedImages => {
-    alert('send image', selectedImages);
+    console.log('send image', selectedImages);
   };
 
 render(){
