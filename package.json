@@ -1,6 +1,6 @@
 {
   "name": "react-native-blob-viewer",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "React Native Pre-attachment blob viewer for multiple file types in a gallery view",
   "main": "BlobViewer.js",
   "scripts": {
