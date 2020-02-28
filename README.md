@@ -22,7 +22,7 @@ or using yarn
 
 ```javascript
 <BlobViewer
-  allPath={data}
+  mediaList={data}
   visible={true}
   onSend={selectedImages => this.selectedImages(selectedImages)}
   onBack={this.openUploadImage}
@@ -62,66 +62,6 @@ this.state={
           type: 'image/jpeg',
           uri: 'https://placeimg.com/640/640/people',
         },
-        {
-          filename: 'image-f260adeb-15bf-4673-9fae-45846211ce77.jpg',
-          size: 0,
-          type: 'video/org',
-          uri: 'https://www.w3schools.com/html/mov_bbb.mp4',
-        },
-        {
-          filename: 'image-f260adeb-15bf-4673-9fae-45846211ce77.jpg',
-          size: 0,
-          type: 'image/jpeg',
-          uri: 'https://placeimg.com/640/640/animals',
-        },
-        {
-          filename: 'image-f260adeb-15bf-4673-9fae-45846211ce77.jpg',
-          size: 0,
-          type: 'audio/org',
-          uri: 'https://www.w3schools.com/tags/horse.mp3',
-        },
-        {
-          filename: 'image-f260adeb-15bf-4673-9fae-45846211ce77.jpg',
-          size: 0,
-          type: 'video/org',
-          uri: 'https://www.w3schools.com/html/movie.mp4',
-        },
-        {
-          filename: 'image-f260adeb-15bf-4673-9fae-45846211ce77.jpg',
-          size: 0,
-          type: 'audio/org',
-          uri: 'https://www.w3schools.com/tags/horse.mp3',
-        },
-        {
-          filename: 'image-f260adeb-15bf-4673-9fae-45846211ce77.jpg',
-          size: 0,
-          type: 'video/org',
-          uri: 'https://www.w3schools.com/html/movie.mp4',
-        },
-        {
-          filename: 'image-f260adeb-15bf-4673-9fae-45846211ce77.jpg',
-          size: 0,
-          type: 'audio/org',
-          uri: 'https://www.w3schools.com/tags/horse.mp3',
-        },
-        {
-          filename: 'image-f260adeb-15bf-4673-9fae-45846211ce77.jpg',
-          size: 0,
-          type: 'video/org',
-          uri: 'https://www.w3schools.com/html/movie.mp4',
-        },
-        {
-          filename: 'image-f260adeb-15bf-4673-9fae-45846211ce77.jpg',
-          size: 0,
-          type: 'audio/org',
-          uri: 'https://www.w3schools.com/tags/horse.mp3',
-        },
-        {
-          filename: 'image-f260adeb-15bf-4673-9fae-45846211ce77.jpg',
-          size: 0,
-          type: 'video/org',
-          uri: 'https://www.w3schools.com/html/movie.mp4',
-        },
       ],
       isGalleryViewVisible: true,
 };
@@ -138,7 +78,7 @@ render(){
 	retrun(
 	....
  	<BlobViewer
-          allPath={data}
+          mediaList={data}
           visible={this.state.isGalleryViewVisible}
           onSend={selectedImages => this.selectedImages(selectedImages)}
           onBack={this.openUploadImage}

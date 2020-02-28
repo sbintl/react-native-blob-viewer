@@ -7,9 +7,8 @@ export default class SliderHeader extends Component {
     super(props);
     this.state = {};
   }
-  renderHeader() {
-    // console.log("header Props", this.props)
-    // console.log("modal slider Props", this.modalSliderProps)
+  render() {
+    let { showSendButton, showDeleteButton } = this.props;
     return (
       <View style={styles.headerBox}>
         <TouchableOpacity onPress={this.props.BackButtonFunc}>
@@ -19,27 +18,27 @@ export default class SliderHeader extends Component {
           />
         </TouchableOpacity>
 
-        <View style={styles.deleteSendBox}>
-          <TouchableOpacity onPress={this.props.deleteCurrentImage}>
-            {/* <Image style={styles.backIcon} source={{uri: 'https://facebook.github.io/react-native/img/tiny_logo.png'}} /> */}
-            <Image
-              style={styles.trashBtn}
-              source={require("../image/deleteFilled.png")}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.props.onSend}>
-            {/* <Image style={styles.backIcon} source={{uri: 'https://facebook.github.io/react-native/img/tiny_logo.png'}} /> */}
-            <Image
-              style={styles.sendBtn}
-              source={require("../image/sendIcon.png")}
-            />
-          </TouchableOpacity>
-        </View>
+        {showDeleteButton && showSendButton ? (
+          <View style={styles.deleteSendBox}>
+            {showDeleteButton ? (
+              <TouchableOpacity onPress={this.props.deleteCurrentImage}>
+                <Image
+                  style={styles.trashBtn}
+                  source={require("../image/deleteFilled.png")}
+                />
+              </TouchableOpacity>
+            ) : null}
+            {showSendButton ? (
+              <TouchableOpacity onPress={this.props.onSend}>
+                <Image
+                  style={styles.sendBtn}
+                  source={require("../image/sendIcon.png")}
+                />
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        ) : null}
       </View>
     );
-  }
-
-  render() {
-    return this.renderHeader();
   }
 }

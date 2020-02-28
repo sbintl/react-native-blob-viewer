@@ -1,21 +1,77 @@
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  Text,
-  TouchableHighlight,
-  SafeAreaView,
-  ScrollView
-} from "react-native";
-import React, { Component, PureComponent } from "react";
-import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { View, TouchableOpacity, Image, FlatList } from "react-native";
+import React, { PureComponent } from "react";
 import ImageSlider from "react-native-image-slider";
 import styles from "./src/style/styles";
 import SliderHeader from "./src/component/SliderHeader";
 import Video from "react-native-video";
+
+export const validateMediaType = path => {
+  let mediaType = path
+    .toString()
+    .toLowerCase()
+    .split(".");
+
+  mediaType = mediaType[mediaType.length - 1];
+
+  // allowed data types png': 1,'.jpg': 1, '.jpeg': 1,  '.pdf': 1,  '.doc': 1,   '.docx': 1, '.csv': 1,'.xls': 1,'.xlsx': 1,'.xlsm': 1,'.txt': 1,'.gif': 1
+  let allowedExtensionForImage = ["jpeg", "jpg", "png", "PNG", "gif"];
+  let allowedExtensionForDocument = [
+    "pdf",
+    "doc",
+    "docx",
+    "csv",
+    "xls",
+    "xlsx",
+    "xlsm",
+    "txt"
+  ];
+
+  let allowedExtensionForVideo = ["mp4"];
+  let allowedExtensionForAudio = ["mp3"];
+  let isValidImage = false;
+  let isValidDoc = false;
+  let isValidAudio = false;
+  let isValidVideo = false;
+  for (let i in allowedExtensionForImage) {
+    if (mediaType == allowedExtensionForImage[i]) {
+      isValidImage = true;
+      break;
+    }
+  }
+  if (!isValidImage) {
+    for (let i in allowedExtensionForDocument) {
+      if (mediaType == allowedExtensionForDocument[i]) {
+        isValidDoc = true;
+        break;
+      }
+    }
+    if (!isValidDoc) {
+      for (let i in allowedExtensionForDocument) {
+        if (mediaType == allowedExtensionForAudio[i]) {
+          isValidAudio = true;
+          break;
+        }
+      }
+      if (isValidAudio) {
+        return "audio";
+      } else {
+        for (let i in allowedExtensionForVideo) {
+          if (mediaType == allowedExtensionForVideo[i]) {
+            isValidVideo = true;
+            break;
+          }
+        }
+        if (isValidVideo) return "video";
+      }
+    } else {
+      // return this.renderDocument(item, key);
+      return "doc";
+    }
+  } else {
+    // return this.renderImage(item, key);
+    return "image";
+  }
+};
 
 export default class BlobViewer extends PureComponent {
   constructor(props) {
@@ -23,32 +79,31 @@ export default class BlobViewer extends PureComponent {
     this.state = {
       currentImageIndex: 0,
       isDelete: false,
-      allPath: [],
+      mediaList: [],
       images: []
-      // lastImageLeft: true,
     };
   }
 
   defaultFunction = () => {
-    let { allPath } = this.props;
+    let { mediaList } = this.props;
 
-    let image = allPath.map((value, index, array) => value.uri);
+    let image = mediaList.map(value => value.uri);
 
     this.setState({
-      allPath: allPath,
+      mediaList: mediaList,
       images: image
     });
   };
 
   renderDocuments = item => {
-    switch (item.type.split("/")[0]) {
+    switch (validateMediaType(item.uri)) {
       case "image":
         return this.renderImage(item.uri, styles.customImage);
       case "audio":
         return this.renderAudioPlayer(item);
       case "video":
         return this.renderVideoPlayer(item);
-      case "file":
+      case "doc":
         return (
           <Image
             source={require("./src/image/file.png")}
@@ -162,16 +217,17 @@ export default class BlobViewer extends PureComponent {
   renderImage(uri, styles) {
     return <Image source={{ uri: uri }} style={styles} />;
   }
+
   componentDidMount() {
     this.defaultFunction();
   }
 
   deleteCurrentImage = () => {
-    let { images, allPath } = this.state;
+    let { images, mediaList } = this.state;
     let filteredImage = images.filter(
       (item, i) => i !== this.state.currentImageIndex
     );
-    let filteredArray = allPath.filter(
+    let filteredArray = mediaList.filter(
       (item, i) => i !== this.state.currentImageIndex
     );
 
@@ -181,44 +237,29 @@ export default class BlobViewer extends PureComponent {
     } else {
       this.setState({
         images: filteredImage,
-        allPath: filteredArray,
+        mediaList: filteredArray,
         isDelete: true
       });
     }
-    // filteredImage.length == 1
-    //   ? this.setState({
-    //       lastImageLeft: false,
-    //     })
-    //   : this.setState({
-    //       lastImageLeft: true,
-    //     });
   };
-  // scrollToIndex = () => {
-  //   // let randomIndex = Math.floor(Math.random(Date.now()) * this.props.data.length);
-  //   this.flatListRef.scrollToIndex({
-  //     animated: true,
-  //     index: this.state.currentImageIndex,
-  //   });
-  //   console.log(this.state.currentImageIndex);
-  // };
 
   BackButtonFunc = () => {
     this.props.onBack();
     this.componentDidMount();
   };
-  onSend = selectedImages => {
-    let { allPath } = this.state;
-    this.props.onSend((selectedImages = allPath));
+  onSend = () => {
+    let { mediaList } = this.state;
+    this.props.onSend((selectedImages = mediaList));
   };
 
   renderSlider() {
-    let { allPath, currentImageIndex } = this.state;
-    // console.log(allPath, 'path');
+    let { mediaList } = this.state;
+
     return (
       <ImageSlider
-        images={allPath}
+        images={mediaList}
         style={styles.slider}
-        customButtons={(position, move, item) => (
+        customButtons={(position, move) => (
           <FlatList
             horizontal={true}
             ref={ref => {
@@ -226,8 +267,8 @@ export default class BlobViewer extends PureComponent {
             }}
             showsHorizontalScrollIndicator={false}
             style={styles.thumbnailImageView}
-            data={allPath}
-            extraData={allPath}
+            data={mediaList}
+            extraData={mediaList}
             keyExtractor={(item, i) => i}
             renderItem={({ item, index }) => {
               if (this.state.isDelete) {
@@ -242,7 +283,6 @@ export default class BlobViewer extends PureComponent {
                 });
               }
 
-              // if (lastImageLeft) {
               return (
                 <TouchableOpacity
                   key={index}
@@ -253,7 +293,6 @@ export default class BlobViewer extends PureComponent {
                     style={position === index && styles.thumbnailCurrentImage}
                   >
                     {this.renderThumbnail(item)}
-                    {/* <Image style={styles.thumbnailImage} source={{uri: item}} /> */}
                   </View>
                 </TouchableOpacity>
               );
@@ -261,55 +300,42 @@ export default class BlobViewer extends PureComponent {
             }}
           />
         )}
-        customSlide={({ index, item, style, width }) => (
+        customSlide={({ index, item, style }) => (
           <TouchableOpacity
             key={index}
             style={[style, styles.customSlide]}
             onPressOut={() => this.SliderMove()}
           >
-            {/* {console.log(index, item, width)} */}
             {this.renderDocuments(item)}
           </TouchableOpacity>
         )}
-        /* {console.log(index, item.type,"hello")}, */
-        /* <Image source={{uri: item}} style={styles.customImage} /> */
       />
     );
   }
 
   SliderMove = () => {
     setTimeout(() => {
-      console.log("current ", this.state.currentImageIndex);
       this.flatListRef.scrollToIndex({
         animated: true,
         index: this.state.currentImageIndex
       });
     }, 450);
-
-    if (
-      this.state.currentImageIndex == 0 ||
-      this.state.currentImageIndex == 1
-    ) {
-      console.log("tr", this.state.currentImageIndex);
-      console.log(this.state);
-    }
   };
 
   render() {
-    // let {lastImageLeft} = this.state;
-    // disable all warning
-    console.disableYellowBox = true;
-
-    if (this.props.visible) {
+    let { visible, images, showSendButton, showDeleteButton } = this.props;
+    if (visible) {
       return (
         <View style={styles.container}>
           <SliderHeader
             {...this.state}
+            showSendButton={showSendButton}
+            showDeleteButton={showDeleteButton}
             BackButtonFunc={this.BackButtonFunc}
             deleteCurrentImage={this.deleteCurrentImage}
             onSend={this.onSend}
           />
-          {this.props.images && this.renderSlider()}
+          {images && this.renderSlider()}
           {this.renderSlider()}
         </View>
       );
@@ -318,171 +344,3 @@ export default class BlobViewer extends PureComponent {
     }
   }
 }
-
-//ANCHOR
-
-// import React, {Component} from 'react';
-// import {
-//   Platform,
-//   StyleSheet,
-//   Text,
-//   View,
-//   Image,
-//   TouchableHighlight,
-//   ScrollView,
-// } from 'react-native';
-
-// import ImageSlider from 'react-native-image-slider';
-
-// class BlobViewer extends Component {
-//   render() {
-//     const images = [
-//       'https://placeimg.com/640/640/nature',
-//       'https://placeimg.com/640/640/people',
-//       'https://placeimg.com/640/640/animals',
-//       'https://placeimg.com/640/640/beer',
-//       'https://placeimg.com/640/640/animals',
-//       'https://placeimg.com/640/640/beer',
-//       'https://placeimg.com/640/640/animals',
-//       'https://placeimg.com/640/640/beer',
-//       'https://placeimg.com/640/640/animals',
-//       'https://placeimg.com/640/640/beer',
-//       'https://placeimg.com/640/640/animals',
-//       'https://placeimg.com/640/640/beer',
-//       'https://placeimg.com/640/640/animals',
-//       'https://placeimg.com/640/640/beer',
-//       'https://placeimg.com/640/640/animals',
-//       'https://placeimg.com/640/640/beer',
-//       'https://placeimg.com/640/640/animals',
-//       'https://placeimg.com/640/640/beer',
-//       'https://placeimg.com/640/640/animals',
-//       'https://placeimg.com/640/640/beer',
-//       'https://placeimg.com/640/640/animals',
-//       'https://placeimg.com/640/640/beer',
-//       'https://placeimg.com/640/640/animals',
-//       'https://placeimg.com/640/640/beer',
-
-//     ]
-
-//     setItemRef = element => {
-//       console.log(element,"element")
-//     };
-
-//     setScrollViewRef = element => {
-//       this.scrollViewRef = element;
-//       console.log(element);
-//     };
-
-//     return (
-//       <View style={styles.container}>
-//         <ImageSlider
-//           images={images}
-//           onPress={({index}) => alert(index)}
-//           customSlide={({index, item, style, width}) => (
-//             // It's important to put style here because it's got offset inside
-//             <View
-//               key={index}
-//               style={[
-//                 style,
-//                 styles.customSlide,
-//                 {backgroundColor: index % 2 === 0 ? 'yellow' : 'green'},
-//               ]}>
-//               <Image source={{uri: item}} style={styles.customImage} />
-//             </View>
-//           )}
-//           customButtons={(position, move) => (
-//             // <View style={styles.buttons}>
-//             <ScrollView
-//               ref={ref => (this.scrollView = ref)}
-//               onContentSizeChange={(contentWidth, contentHeight) => {
-//                 console.log(contentHeight,contentWidth ,"console")
-//                 this.scrollView.scrollTo({x:0,y:400,animated: true,});
-//               }}
-//               horizontal={true}
-//               style={{backgroundColor: 'purple', height: 80}}>
-//               {images.map((image, index) => {
-//                 return (
-//                   <TouchableHighlight
-//                     ref={this.setItemRef}
-//                     key={index}
-//                     underlayColor="#ccc"
-//                     onPress={() => move(index)}
-//                     style={styles.button}>
-//                     <Text style={position === index && styles.buttonSelected}>
-//                       <Image
-//                         source={{uri: image}}
-//                         style={{height: 70, width: 100, backgroundColor: 'red'}}
-//                       />
-//                     </Text>
-//                   </TouchableHighlight>
-//                 );
-//               })}
-//             </ScrollView>
-//             // </View>
-//           )}
-//         />
-//       </View>
-//     );
-//   }
-// }
-
-// export default BlobViewer;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#F5FCFF',
-//   },
-//   slider: {backgroundColor: '#000', height: 350},
-//   content1: {
-//     width: '100%',
-//     height: 50,
-//     marginBottom: 10,
-//     backgroundColor: '#000',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   content2: {
-//     width: '100%',
-//     height: 100,
-//     marginTop: 10,
-//     backgroundColor: '#000',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   contentText: {color: '#fff'},
-//   buttons: {
-//     backgroundColor: 'pink',
-//     zIndex: 1,
-//     // height: 80,
-//     // width: 80,
-//     marginTop: -25,
-//     marginBottom: 10,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     flexDirection: 'row',
-//   },
-//   button: {
-//     margin: 3,
-//     width: 100,
-//     height: 100,
-//     opacity: 0.9,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   buttonSelected: {
-//     opacity: 1,
-//     backgroundColor: 'blue',
-//     padding: 5,
-//   },
-//   customSlide: {
-//     backgroundColor: 'green',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   customImage: {
-//     width: '100%',
-//     height: '100%',
-//     backgroundColor: 'orange',
-//   },
-// });
